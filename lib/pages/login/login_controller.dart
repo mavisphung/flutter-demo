@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getx_navigation_bar/pages/login/models.dart';
 import 'package:getx_navigation_bar/routes/app_routes.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -25,29 +26,33 @@ class LoginController extends GetxController {
       return;
     }
     loginStatus.value = LoginStatus.loading;
+
+    // Request Login model
+    RequestLoginModel model = RequestLoginModel(
+      email: usernameController.value.text,
+      password: passwordController.value.text,
+    );
+
     await Future.delayed(const Duration(seconds: 5));
     var response = await client.post(
       Uri.http(baseUrl, '/login/'),
-      body: {
-        'email': usernameController.value.text,
-        'password': passwordController.value.text,
-        'type': type,
-      },
+      body: model.toMap(),
     );
 
-    var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+    var decodedResponse = ResponseLoginModel.fromJson(response.body);
     if (response.statusCode >= 400) {
       Get.snackbar(
         'Login Error',
-        '${decodedResponse["message"]}',
+        decodedResponse.message,
         margin: const EdgeInsets.all(12.0),
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
       );
       loginStatus.value = LoginStatus.error;
+      update();
       return;
     }
-    
+
     update();
     Get.offNamed(AppRoutes.DASHBOARD);
   }
