@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:getx_navigation_bar/pages/dashboard/dashboard_binding.dart';
 import 'package:getx_navigation_bar/pages/dashboard/dashboard_page.dart';
+import 'package:getx_navigation_bar/pages/login/login_binding.dart';
 import 'package:getx_navigation_bar/pages/login/login_page.dart';
 import 'package:getx_navigation_bar/pages/register/register_page.dart';
 import 'package:getx_navigation_bar/routes/app_routes.dart';
@@ -10,7 +11,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.LOGIN,
       page: () => LoginPage(),
-      // binding: DashboardBinding(),
+      binding: LoginBinding(),
     ),
     GetPage(
       name: AppRoutes.REGISTER,

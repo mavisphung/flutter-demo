@@ -7,9 +7,10 @@ import 'package:getx_navigation_bar/routes/app_routes.dart';
 import 'package:getx_navigation_bar/widgets/item_button_widget.dart';
 import 'package:http/http.dart' as http;
 
-class LoginPage extends StatelessWidget {
+// class LoginPage extends StatelessWidget {
+class LoginPage extends GetView<LoginController> {
   LoginPage({Key? key}) : super(key: key);
-  LoginController loginController = Get.put(LoginController());
+  // LoginController loginController = Get.put(LoginController());
   var client = http.Client();
   String baseUrl = 'capstone-elb-1141242582.ap-southeast-1.elb.amazonaws.com';
 
@@ -38,17 +39,14 @@ class LoginPage extends StatelessWidget {
                               child: TextField(
                                 decoration: const InputDecoration(
                                   border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(7.5)),
+                                    borderRadius: BorderRadius.all(Radius.circular(7.5)),
                                   ),
                                   filled: true,
-                                  floatingLabelAlignment:
-                                      FloatingLabelAlignment.start,
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.auto,
+                                  floatingLabelAlignment: FloatingLabelAlignment.start,
+                                  floatingLabelBehavior: FloatingLabelBehavior.auto,
                                   labelText: 'Username',
                                 ),
-                                controller: loginController.usernameController,
+                                controller: controller.usernameController,
                               ),
                             ),
                             const SizedBox(height: 10),
@@ -60,17 +58,14 @@ class LoginPage extends StatelessWidget {
                                 autocorrect: false,
                                 decoration: const InputDecoration(
                                   border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(7.5)),
+                                    borderRadius: BorderRadius.all(Radius.circular(7.5)),
                                   ),
                                   filled: true,
-                                  floatingLabelAlignment:
-                                      FloatingLabelAlignment.start,
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.auto,
+                                  floatingLabelAlignment: FloatingLabelAlignment.start,
+                                  floatingLabelBehavior: FloatingLabelBehavior.auto,
                                   labelText: 'Password',
                                 ),
-                                controller: loginController.passwordController,
+                                controller: controller.passwordController,
                               ),
                             ),
                           ],
@@ -82,59 +77,8 @@ class LoginPage extends StatelessWidget {
                       SizedBox(
                         width: Get.width,
                         child: ItemButtonWidget(
-                          isDisable: loginController.loginStatus.value ==
-                              LoginStatus.loading,
-                          onPressed: () async {
-                            print(
-                                'status: ${loginController.loginStatus.value}');
-                            loginController.updateUI(LoginStatus.loading);
-                            var response = await client.post(
-                              Uri.http(baseUrl, '/login/'),
-                              body: {
-                                'email': loginController
-                                    .usernameController.value.text,
-                                'password': loginController
-                                    .passwordController.value.text,
-                                'type': loginController.type,
-                              },
-                            );
-
-                            var decodedResponse =
-                                jsonDecode(utf8.decode(response.bodyBytes))
-                                    as Map<String, dynamic>;
-                            if (response.statusCode >= 400) {
-                              Get.snackbar(
-                                'Login Error',
-                                '${decodedResponse["message"]}',
-                                margin: const EdgeInsets.all(12.0),
-                                snackPosition: SnackPosition.BOTTOM,
-                                backgroundColor: Colors.red,
-                              );
-                              loginController.updateUI(LoginStatus.error);
-                              print(
-                                  'status: ${loginController.loginStatus.value}');
-                              return;
-                            }
-                            Get.snackbar(
-                              'Login to app',
-                              'Welcome back, ${decodedResponse["data"]["firstName"]}',
-                              margin: const EdgeInsets.all(12.0),
-                              snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: Colors.lightGreen,
-                            );
-                            loginController.updateUI(LoginStatus.init);
-                            print(
-                                'status: ${loginController.loginStatus.value}');
-                            Get.offNamed(AppRoutes.DASHBOARD);
-                            // print(decodedResponse);
-                            // Get.snackbar(
-                            //   'Login',
-                            //   'User ${loginController.usernameController.value.text}',
-                            //   margin: const EdgeInsets.all(12.0),
-                            //   snackPosition: SnackPosition.BOTTOM,
-                            //   backgroundColor: Colors.lightGreen,
-                            // );
-                          },
+                          isDisable: controller.loginStatus.value == LoginStatus.loading,
+                          onPressed: controller.login,
                         ),
                       ),
                       const SizedBox(height: 20),
